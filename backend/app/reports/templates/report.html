@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>N-CASA Security Audit Report — {{ report.report_id }}</title>
+    <style>
+        @page {
+            size: letter portrait;
+            margin: 15mm 15mm 15mm 15mm;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            font-size: 10pt;
+            line-height: 1.4;
+            color: #1e293b;
+            background-color: #ffffff;
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* Header Banner */
+        .report-header {
+            border-bottom: 3px solid #0f172a;
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+        }
+
+        .report-title {
+            font-size: 20pt;
+            font-weight: bold;
+            color: #0f172a;
+            margin: 0 0 6px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .report-subtitle {
+            font-size: 11pt;
+            color: #475569;
+            margin: 0;
+        }
+
+        .meta-grid {
+            display: table;
+            width: 100%;
+            margin-top: 14px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            padding: 10px;
+        }
+
+        .meta-row {
+            display: table-row;
+        }
+
+        .meta-cell {
+            display: table-cell;
+            padding: 4px 10px;
+            font-size: 9pt;
+        }
+
+        .meta-label {
+            font-weight: bold;
+            color: #475569;
+        }
+
+        /* Safety Banners */
+        .safety-box {
+            background-color: #fffbe6;
+            border-left: 4px solid #d97706;
+            padding: 10px 14px;
+            margin-bottom: 16px;
+            font-size: 9pt;
+            color: #78350f;
+            border-radius: 2px;
+        }
+
+        .safety-title {
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .ai-notice-box {
+            background-color: #eff6ff;
+            border-left: 4px solid #2563eb;
+            padding: 10px 14px;
+            margin-bottom: 20px;
+            font-size: 9pt;
+            color: #1e40af;
+            border-radius: 2px;
+        }
+
+        /* Headings */
+        h2 {
+            font-size: 13pt;
+            color: #0f172a;
+            border-bottom: 1.5px solid #cbd5e1;
+            padding-bottom: 4px;
+            margin-top: 24px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        h3 {
+            font-size: 11pt;
+            color: #334155;
+            margin-top: 14px;
+            margin-bottom: 8px;
+        }
+
+        /* Status & Severity Badges */
+        .badge {
+            display: inline-block;
+            padding: 2px 7px;
+            font-size: 8pt;
+            font-weight: bold;
+            border-radius: 3px;
+            text-transform: uppercase;
+        }
+
+        .badge-pass { background-color: #dcfce7; color: #15803d; border: 1px solid #86efac; }
+        .badge-fail { background-color: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; }
+        .badge-not-verifiable { background-color: #fef3c7; color: #b45309; border: 1px solid #fde047; }
+
+        .sev-critical { background-color: #7f1d1d; color: #ffffff; }
+        .sev-high { background-color: #dc2626; color: #ffffff; }
+        .sev-medium { background-color: #d97706; color: #ffffff; }
+        .sev-low { background-color: #2563eb; color: #ffffff; }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 16px;
+            font-size: 9pt;
+        }
+
+        th {
+            background-color: #0f172a;
+            color: #ffffff;
+            text-align: left;
+            padding: 7px 8px;
+            font-weight: 600;
+            font-size: 8.5pt;
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 6px 8px;
+            border-bottom: 1px solid #e2e8f0;
+            vertical-align: top;
+        }
+
+        tr:nth-child(even) td {
+            background-color: #f8fafc;
+        }
+
+        /* Code / Evidence Snippets */
+        pre, code {
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 8.5pt;
+        }
+
+        .code-box {
+            background-color: #1e293b;
+            color: #f8fafc;
+            padding: 8px 12px;
+            border-radius: 4px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+            margin: 6px 0;
+        }
+
+        .evidence-tag {
+            font-size: 8pt;
+            color: #475569;
+            background: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 3px;
+            border: 1px solid #cbd5e1;
+        }
+
+        .section-block {
+            margin-bottom: 22px;
+            page-break-inside: avoid;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Banner -->
+    <div class="report-header">
+        <div class="report-title">N-CASA Automated Security Audit Report</div>
+        <div class="report-subtitle">Network Configuration Automated Security Auditor — Executive Audit Snapshot</div>
+        
+        <div class="meta-grid">
+            <div class="meta-row">
+                <div class="meta-cell"><span class="meta-label">Report ID:</span> {{ report.report_id }}</div>
+                <div class="meta-cell"><span class="meta-label">Audit ID:</span> {{ report.audit_id }}</div>
+            </div>
+            <div class="meta-row">
+                <div class="meta-cell"><span class="meta-label">Generated Date:</span> {{ report.generated_at.strftime('%Y-%m-%d %H:%M:%S UTC') if report.generated_at else 'N/A' }}</div>
+                <div class="meta-cell"><span class="meta-label">Compliance Framework:</span> {{ report.audit_metadata.framework or 'CIS' }}</div>
+            </div>
+            <div class="meta-row">
+                <div class="meta-cell"><span class="meta-label">Audit Status:</span> {{ report.audit_metadata.status or 'N/A' }}</div>
+                <div class="meta-cell"><span class="meta-label">Report Version:</span> {{ report.report_version }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Safety Notice Banner -->
+    <div class="safety-box">
+        <div class="safety-title">⚠️ Mandatory Safety Notice & Authorization Requirement</div>
+        All remediation commands contained within this report are proposals only. They were NOT automatically executed on network devices. Manual validation, peer review, and authorization are required prior to applying any configuration changes to production environments.
+    </div>
+
+    {% if report.ai_analysis_summary %}
+    <div class="ai-notice-box">
+        <div class="safety-title">🤖 AI Advisory Notice</div>
+        AI-assisted analysis included in this report is advisory. Deterministic compliance results and security rules remain authoritative.
+    </div>
+    {% endif %}
+
+    <!-- Section 1: Executive Summary -->
+    <div class="section-block">
+        <h2>1. Executive Summary</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Metric</th>
+                    <th>Value</th>
+                    <th>Metric</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Files Audited</strong></td>
+                    <td>{{ report.inventory_summary.valid_configs_count or 0 }}</td>
+                    <td><strong>Controls Evaluated</strong></td>
+                    <td>{{ report.compliance_summary.total_controls or 0 }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Controls Passed (PASS)</strong></td>
+                    <td><span class="badge badge-pass">{{ report.compliance_summary.pass_count or 0 }}</span></td>
+                    <td><strong>Open Findings (FAIL)</strong></td>
+                    <td><span class="badge badge-fail">{{ report.compliance_summary.fail_count or 0 }}</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Scope Limitations (NOT_VERIFIABLE)</strong></td>
+                    <td><span class="badge badge-not-verifiable">{{ report.compliance_summary.not_verifiable_count or 0 }}</span></td>
+                    <td><strong>Remediation Proposals</strong></td>
+                    <td>{{ report.remediation_summary.remediations_available or 0 }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Section 2: Compliance Breakdown -->
+    <div class="section-block">
+        <h2>2. Compliance Evaluation Summary</h2>
+        {% if report.compliance_summary.framework_counts %}
+        <h3>Framework Breakdown</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Framework</th>
+                    <th>PASS</th>
+                    <th>FAIL</th>
+                    <th>NOT_VERIFIABLE</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for fw, counts in report.compliance_summary.framework_counts.items() %}
+                <tr>
+                    <td><strong>{{ fw }}</strong></td>
+                    <td><span class="badge badge-pass">{{ counts.PASS }}</span></td>
+                    <td><span class="badge badge-fail">{{ counts.FAIL }}</span></td>
+                    <td><span class="badge badge-not-verifiable">{{ counts.NOT_VERIFIABLE }}</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+
+        {% if report.compliance_results %}
+        <h3>Detailed Compliance Control Results</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Control ID</th>
+                    <th>Framework</th>
+                    <th>Control Title</th>
+                    <th>Severity</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for res in report.compliance_results %}
+                <tr>
+                    <td><code>{{ res.control_id }}</code></td>
+                    <td>{{ res.framework }}</td>
+                    <td>{{ res.title }}</td>
+                    <td><span class="badge sev-{{ res.severity|lower }}">{{ res.severity }}</span></td>
+                    <td>
+                        {% if res.status == 'PASS' %}
+                        <span class="badge badge-pass">PASS</span>
+                        {% elif res.status == 'FAIL' %}
+                        <span class="badge badge-fail">FAIL</span>
+                        {% else %}
+                        <span class="badge badge-not-verifiable">NOT_VERIFIABLE</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+    </div>
+
+    <!-- Section 3: Actionable Security Findings -->
+    <div class="section-block">
+        <h2>3. Actionable Security Findings</h2>
+        {% if report.findings %}
+            {% for f in report.findings %}
+            <div style="margin-bottom: 16px; border: 1px solid #cbd5e1; border-radius: 4px; padding: 10px;">
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; margin-bottom: 6px;">
+                    <span style="font-weight: bold; font-size: 10pt;">{{ f.finding_id }}: {{ f.title }}</span>
+                    <span><span class="badge sev-{{ f.severity|lower }}">{{ f.severity }}</span> <span class="badge badge-fail">{{ f.status }}</span></span>
+                </div>
+                <div style="font-size: 9pt; margin-bottom: 6px;"><strong>Control ID:</strong> <code>{{ f.control_id }}</code> ({{ f.framework }})</div>
+                <div style="font-size: 9pt; margin-bottom: 6px;"><strong>Description:</strong> {{ f.description }}</div>
+                <div style="font-size: 9pt; margin-bottom: 6px;"><strong>Expected:</strong> <code>{{ f.expected }}</code> | <strong>Observed:</strong> <code>{{ f.observed }}</code></div>
+                {% if f.evidence %}
+                <div style="font-size: 8.5pt; font-weight: bold; margin-top: 6px;">Evidence Traceability:</div>
+                {% for ev in f.evidence %}
+                <div style="font-size: 8.5pt; margin-top: 4px;">
+                    <span class="evidence-tag">File: {{ ev.source_file or 'config' }}</span>
+                    {% if ev.source_line %}<span class="evidence-tag">Line: {{ ev.source_line }}</span>{% endif %}
+                    <div class="code-box">{{ ev.source_text }}</div>
+                </div>
+                {% endfor %}
+                {% endif %}
+            </div>
+            {% endfor %}
+        {% else %}
+            <p style="font-size: 9pt; color: #64748b;">No security compliance failures detected.</p>
+        {% endif %}
+    </div>
+
+    <!-- Section 4: Assessment Limitations -->
+    <div class="section-block">
+        <h2>4. Assessment Limitations (NOT_VERIFIABLE)</h2>
+        {% if report.assessment_limitations %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Control ID</th>
+                        <th>Framework</th>
+                        <th>Title</th>
+                        <th>Reason / Required Verification</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for lim in report.assessment_limitations %}
+                    <tr>
+                        <td><code>{{ lim.control_id }}</code></td>
+                        <td>{{ lim.framework }}</td>
+                        <td>{{ lim.title }}</td>
+                        <td>{{ lim.reason or lim.description or 'Insufficient evidence for deterministic evaluation.' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p style="font-size: 9pt; color: #64748b;">All evaluated security controls were deterministically verifiable.</p>
+        {% endif %}
+    </div>
+
+    <!-- Section 5: Proposed Remediation Steps -->
+    <div class="section-block">
+        <h2>5. Proposed Remediation Steps</h2>
+        {% if report.remediation_proposals %}
+            {% for r in report.remediation_proposals %}
+            <div style="margin-bottom: 16px; border: 1px solid #cbd5e1; border-radius: 4px; padding: 10px;">
+                <div style="font-weight: bold; font-size: 10pt; color: #0f172a;">{{ r.remediation_id }}: {{ r.title }}</div>
+                <div style="font-size: 8.5pt; color: #475569; margin-bottom: 6px;">Vendor: <strong>{{ r.vendor }}</strong> | Device Type: <strong>{{ r.device_type }}</strong> | Status: <strong>{{ r.status }}</strong></div>
+                {% if r.vendor == 'UNKNOWN' or r.status == 'MANUAL_REVIEW_REQUIRED' %}
+                <div style="background-color: #fef2f2; border: 1px solid #fca5a5; padding: 6px 10px; font-size: 8.5pt; color: #991b1b; margin-bottom: 6px;">
+                    <strong>MANUAL REVIEW REQUIRED:</strong> Vendor-specific automatic CLI generation is not available for unsupported or unknown vendors.
+                </div>
+                {% endif %}
+                {% if r.proposed_commands %}
+                <div style="font-size: 8.5pt; font-weight: bold;">Proposed Configuration Commands:</div>
+                <div class="code-box">{% for cmd in r.proposed_commands %}{{ cmd }}
+{% endfor %}</div>
+                {% endif %}
+                {% if r.validation_steps %}
+                <div style="font-size: 8.5pt; font-weight: bold; margin-top: 4px;">Validation Steps:</div>
+                <ul style="font-size: 8.5pt; margin: 2px 0 6px 18px; padding: 0;">
+                    {% for v in r.validation_steps %}<li>{{ v }}</li>{% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+            {% endfor %}
+        {% else %}
+            <p style="font-size: 9pt; color: #64748b;">No remediation proposals generated.</p>
+        {% endif %}
+    </div>
+
+    <!-- Section 6: AI-Assisted Analysis -->
+    {% if report.ai_analysis_summary %}
+    <div class="section-block">
+        <h2>6. AI-Assisted Configuration Analysis</h2>
+        <p style="font-size: 9pt; color: #475569;">The following analysis was generated by AI for unknown configuration syntax. Deterministic rules remain authoritative.</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Metric</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Analysis Status</strong></td>
+                    <td>{{ report.ai_analysis_summary.status or 'AI_ANALYSIS_COMPLETE' }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Analyzed Files</strong></td>
+                    <td>{{ report.ai_analysis_summary.analyzed_files or 0 }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    <!-- Section 7: Device & Configuration Inventory -->
+    <div class="section-block">
+        <h2>7. Device & Configuration Inventory</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>File Name</th>
+                    <th>Vendor</th>
+                    <th>Device Type</th>
+                    <th>Confidence</th>
+                    <th>Method</th>
+                    <th>Line Count</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for dev in report.devices %}
+                <tr>
+                    <td><code>{{ dev.relative_path or dev.file_id }}</code></td>
+                    <td><strong>{{ dev.vendor }}</strong></td>
+                    <td>{{ dev.device_type }}</td>
+                    <td>{{ (dev.confidence * 100)|round|int if dev.confidence else 100 }}%</td>
+                    <td>{{ dev.method }}</td>
+                    <td>{{ dev.line_count or 'N/A' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</body>
+</html>

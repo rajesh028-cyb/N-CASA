@@ -1,0 +1,81 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ──────────────────────────────────────────────
+   N-CASA Global Base Styles
+   ────────────────────────────────────────────── */
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    font-size: 14px;
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-ncasa-bg text-ncasa-text font-sans;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-ncasa-bg;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-ncasa-border2 rounded-full;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-ncasa-muted;
+  }
+
+  /* Selection */
+  ::selection {
+    @apply bg-ncasa-accent text-white;
+  }
+}
+
+/* ──────────────────────────────────────────────
+   N-CASA Component Utilities
+   ────────────────────────────────────────────── */
+@layer components {
+  /* Card */
+  .card {
+    @apply bg-ncasa-surface border border-ncasa-border rounded;
+  }
+  .card-interactive {
+    @apply card transition-colors duration-150 hover:border-ncasa-border2 cursor-pointer;
+  }
+
+  /* Sidebar nav item */
+  .nav-item {
+    @apply flex items-center gap-3 px-3 py-2.5 rounded text-ncasa-muted text-sm font-medium
+           transition-colors duration-150 cursor-pointer select-none;
+  }
+  .nav-item:hover {
+    @apply bg-ncasa-surface2 text-ncasa-subtle;
+  }
+  .nav-item.active {
+    @apply bg-ncasa-accent-l text-ncasa-accent border-l-2 border-ncasa-accent pl-[10px];
+  }
+
+  /* Focus ring */
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-ncasa-accent focus:ring-offset-1 focus:ring-offset-ncasa-bg;
+  }
+
+  /* Section title */
+  .section-label {
+    @apply text-[10px] font-semibold uppercase tracking-widest text-ncasa-muted px-3 mb-1;
+  }
+}
