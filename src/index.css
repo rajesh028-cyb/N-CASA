@@ -3,8 +3,18 @@
 @tailwind utilities;
 
 /* ──────────────────────────────────────────────
-   N-CASA Global Base Styles
+   N-CASA Global Base Styles & Layout Tokens
    ────────────────────────────────────────────── */
+:root {
+  --header-height: 56px;
+  --sidebar-width: 220px;
+  --sidebar-collapsed-width: 60px;
+  --content-padding-x: 1.5rem;
+  --content-padding-y: 1.5rem;
+  --page-header-spacing: 1.5rem;
+  --section-gap: 1.5rem;
+}
+
 @layer base {
   *, *::before, *::after {
     box-sizing: border-box;

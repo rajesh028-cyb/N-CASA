@@ -61,6 +61,9 @@ class ComplianceResult(BaseModel):
     evidence: List[ComplianceEvidence] = Field(default_factory=list)
     rule: str
     internal_mapping: bool = True
+    file_id: Optional[str] = None
+    vendor: Optional[str] = None
+    device_type: Optional[str] = None
 
 
 class ComplianceSummaryCounts(BaseModel):

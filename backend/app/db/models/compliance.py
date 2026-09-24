@@ -12,7 +12,7 @@ from app.db.base import Base
 class ComplianceResultModel(Base):
     __tablename__ = "compliance_results"
     __table_args__ = (
-        UniqueConstraint("audit_id", "control_id", name="uq_audit_control"),
+        UniqueConstraint("audit_id", "control_id", "file_id", name="uq_audit_control_file"),
     )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
@@ -31,6 +31,8 @@ class ComplianceResultModel(Base):
     observed: Mapped[str] = mapped_column(String(512), nullable=False)
     rationale: Mapped[str] = mapped_column(String(1024), nullable=False)
     internal_mapping: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
+    file_id: Mapped[str] = mapped_column(String(64), nullable=False, default="")
+    vendor: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
     evidence: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSON, nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),

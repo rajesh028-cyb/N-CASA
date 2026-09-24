@@ -22,7 +22,7 @@ class Settings(BaseSettings):
 
     # ── Application ──────────────────────────────────────────────
     APP_NAME: str = "N-CASA API"
-    APP_VERSION: str = "0.2.0"
+    APP_VERSION: str = "1.0.0"
     DEBUG: bool = False
 
     # ── CORS ─────────────────────────────────────────────────────
@@ -53,8 +53,8 @@ class Settings(BaseSettings):
     AI_TIMEOUT_SECONDS: int = 60
 
     # ── Database Configuration (Block 11) ─────────────────────────
-    DATABASE_URL: str = "postgresql+asyncpg://postgres:postgres@127.0.0.1:5433/n_casa"
-    TEST_DATABASE_URL: str = "postgresql+asyncpg://postgres:postgres@127.0.0.1:5433/n_casa_test"
+    DATABASE_URL: str = "postgresql+asyncpg://postgres:postgres@127.0.0.1:5432/n_casa"
+    TEST_DATABASE_URL: str = "postgresql+asyncpg://postgres:postgres@127.0.0.1:5432/n_casa_test"
 
 
 settings = Settings()

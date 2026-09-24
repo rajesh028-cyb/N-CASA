@@ -4,6 +4,7 @@ import { getAllRemediation, reviewRemediation } from '../api/audits';
 import Badge from '../components/ui/Badge';
 import Button from '../components/ui/Button';
 import EmptyState from '../components/ui/EmptyState';
+import PageHeader from '../components/layout/PageHeader';
 
 const statuses = ['All', 'AVAILABLE', 'MANUAL_REVIEW_REQUIRED'];
 const reviewStatuses = ['All', 'PENDING_REVIEW', 'REVIEWED'];
@@ -57,14 +58,12 @@ export default function Remediation() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 flex-1 flex flex-col">
       {/* Page Header */}
-      <div>
-        <h1 className="text-xl font-bold text-ncasa-text">Security Remediation Proposals</h1>
-        <p className="text-sm text-ncasa-muted mt-0.5">
-          Review vendor-specific proposed configuration changes before applying through change-management pipelines.
-        </p>
-      </div>
+      <PageHeader
+        title="Security Remediation Proposals"
+        subtitle="Review vendor-specific proposed configuration changes before applying through change-management pipelines."
+      />
 
       {/* Mandatory Safety Notice */}
       <div className="flex items-start gap-3 px-4 py-3 rounded border border-amber-500/30 bg-amber-950/20 text-sm">
@@ -159,11 +158,13 @@ export default function Remediation() {
           {error}
         </div>
       ) : items.length === 0 ? (
-        <EmptyState
-          icon={FileCode}
-          title="No Remediation Proposals Generated"
-          description="Either no open findings exist for remediation, or no proposals match your filters."
-        />
+        <div className="py-6">
+          <EmptyState
+            icon={FileCode}
+            title="No Remediation Proposals Generated"
+            description="Either no open findings exist for remediation, or no proposals match your filters."
+          />
+        </div>
       ) : (
         <div className="space-y-4">
           <p className="text-xs text-ncasa-muted px-1">

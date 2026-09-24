@@ -4,6 +4,7 @@ import { ClipboardList, AlertTriangle, CheckCircle2, ArrowRight, FilePlus2, Wren
 import StatCard from '../components/dashboard/StatCard';
 import RecentAudits from '../components/dashboard/RecentAudits';
 import Button from '../components/ui/Button';
+import PageHeader from '../components/layout/PageHeader';
 import { getAudits, getAllFindings, getAllRemediation } from '../api/audits';
 import { getHealthStatus } from '../api/client';
 
@@ -87,17 +88,16 @@ export default function Dashboard() {
   const dbOk = health.database === 'connected';
 
   return (
-    <div className="space-y-6">
-      {/* Page header */}
-      <div className="flex items-start justify-between gap-4 flex-wrap">
-        <div>
-          <h1 className="text-xl font-bold text-ncasa-text">Dashboard</h1>
-          <p className="text-sm text-ncasa-muted mt-0.5">Network security and compliance operational status</p>
-        </div>
-        <Link to="/audit/new">
-          <Button variant="primary" icon={FilePlus2} size="sm">New Audit</Button>
-        </Link>
-      </div>
+    <div className="space-y-6 flex-1 flex flex-col">
+      <PageHeader
+        title="Dashboard"
+        subtitle="Network security and compliance operational status"
+        actions={
+          <Link to="/audit/new">
+            <Button variant="primary" icon={FilePlus2} size="sm">New Audit</Button>
+          </Link>
+        }
+      />
 
       {/* Real Summary Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">

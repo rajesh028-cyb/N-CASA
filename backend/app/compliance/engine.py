@@ -33,9 +33,9 @@ class ComplianceEngine:
         """
         rules = compliance_rule_registry.get_rules(framework_filter)
 
-        results_by_control: dict[str, ComplianceResult] = {}
+        all_results: List[ComplianceResult] = []
 
-        # If multiple files exist in audit, evaluate rules across normalized configs
+        # Evaluate each normalized configuration independently to prevent cross-config contamination
         for config in norm_configs:
             # Skip un-normalized or unsupported files
             if config.status.value != "NORMALIZED":
@@ -43,35 +43,10 @@ class ComplianceEngine:
 
             for rule in rules:
                 res = rule.evaluate(config)
-                cid = res.control_id
-
-                if cid not in results_by_control:
-                    results_by_control[cid] = res
-                else:
-                    existing = results_by_control[cid]
-                    # If any file fails the control requirement, the control status is FAIL for the audit
-                    if res.status == ComplianceStatusEnum.FAIL:
-                        existing.status = ComplianceStatusEnum.FAIL
-                        existing.observed = f"{existing.observed}; {res.observed}" if existing.observed != res.observed else existing.observed
-                        res_exp = getattr(res, "explanation", getattr(res, "rationale", None))
-                        exist_exp = getattr(existing, "explanation", getattr(existing, "rationale", "")) or ""
-                        if res_exp and res_exp not in exist_exp:
-                            if hasattr(existing, "explanation"):
-                                existing.explanation = f"{exist_exp}\n{res_exp}".strip()
-                            elif hasattr(existing, "rationale"):
-                                existing.rationale = f"{exist_exp}\n{res_exp}".strip()
-                    elif res.status == ComplianceStatusEnum.PASS and existing.status == ComplianceStatusEnum.NOT_VERIFIABLE:
-                        existing.status = ComplianceStatusEnum.PASS
-                        existing.observed = res.observed
-
-                    # Merge evidence items
-                    existing_ev_keys = {(ev.source_file, ev.source_line) for ev in (existing.evidence or [])}
-                    for ev in (res.evidence or []):
-                        if (ev.source_file, ev.source_line) not in existing_ev_keys:
-                            existing.evidence.append(ev)
-                            existing_ev_keys.add((ev.source_file, ev.source_line))
-
-        all_results: List[ComplianceResult] = list(results_by_control.values())
+                res.file_id = config.file_id
+                res.vendor = config.vendor
+                res.device_type = config.device_type
+                all_results.append(res)
 
         summary_counts = ComplianceSummaryCounts()
         severity_counts = ComplianceSeverityCounts()

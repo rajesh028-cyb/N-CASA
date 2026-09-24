@@ -37,6 +37,20 @@ async def lifespan(app: FastAPI):
     logger.info("CORS origins: %s", settings.CORS_ORIGINS)
     logger.info("Upload dir: %s", settings.UPLOAD_DIR)
     logger.info("Max upload: %d MB", settings.MAX_UPLOAD_BYTES // (1024 * 1024))
+    try:
+        from app.db.session import AsyncSessionLocal
+        from sqlalchemy import text
+        async with AsyncSessionLocal() as session:
+            await session.execute(text("ALTER TABLE compliance_results ADD COLUMN IF NOT EXISTS file_id VARCHAR(64) DEFAULT '';"))
+            await session.execute(text("ALTER TABLE compliance_results ADD COLUMN IF NOT EXISTS vendor VARCHAR(64);"))
+            await session.execute(text("ALTER TABLE compliance_results DROP CONSTRAINT IF EXISTS uq_audit_control;"))
+            try:
+                await session.execute(text("ALTER TABLE compliance_results ADD CONSTRAINT uq_audit_control_file UNIQUE (audit_id, control_id, file_id);"))
+            except Exception:
+                pass
+            await session.commit()
+    except Exception as exc:
+        logger.warning("Auto-migration check notice: %s", exc)
     yield
     # Shutdown
     logger.info("N-CASA API shutting down")

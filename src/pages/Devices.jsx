@@ -5,6 +5,7 @@ import { Table, Tr, Td } from '../components/ui/Table';
 import Badge from '../components/ui/Badge';
 import Input from '../components/ui/Input';
 import EmptyState from '../components/ui/EmptyState';
+import PageHeader from '../components/layout/PageHeader';
 
 export default function Devices() {
   const [deviceList, setDeviceList] = useState([]);
@@ -91,14 +92,12 @@ export default function Devices() {
   const uniqueVendors = ['All', ...new Set(deviceList.map((d) => d.vendor).filter(Boolean))];
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6 flex-1 flex flex-col">
       {/* Page header */}
-      <div>
-        <h1 className="text-xl font-bold text-ncasa-text">Discovered Network Devices & Configurations</h1>
-        <p className="text-sm text-ncasa-muted mt-0.5">
-          Configurations and detected device profiles extracted from ingested audit packages.
-        </p>
-      </div>
+      <PageHeader
+        title="Discovered Network Devices & Configurations"
+        subtitle="Configurations and detected device profiles extracted from ingested audit packages."
+      />
 
       {/* Mode Disclaimer Banner */}
       <div className="flex items-start gap-3 px-4 py-3 rounded border border-ncasa-border bg-ncasa-surface2 text-xs text-ncasa-muted">

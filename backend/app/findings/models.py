@@ -52,6 +52,9 @@ class FindingRecord(BaseModel):
     expected: str
     observed: str
     rationale: str
+    vendor: str = ""
+    device_type: str = ""
+    file_id: Optional[str] = None
     remediation_status: RemediationStatusEnum = RemediationStatusEnum.PENDING_BLOCK_9
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 

@@ -104,11 +104,23 @@ class FortinetParser(BaseParser):
                         evidence.append(ParsedEvidenceItem(line=idx, text=sline, field="vdom"))
                     continue
 
+                # Logging settings
+                if current_config_block and "log" in current_config_block:
+                    if key in ("server", "server-ip", "syslog-server") or "server" in key:
+                        data["logging"]["targets"].append(val)
+                        evidence.append(ParsedEvidenceItem(line=idx, text=sline, field="logging.targets"))
+                        continue
+                    elif key == "status" and val.lower() == "enable":
+                        data["logging"]["configured"] = True
+                        evidence.append(ParsedEvidenceItem(line=idx, text=sline, field="logging.status"))
+                        continue
+
                 # NTP settings
-                if current_config_block == "system ntp" and ("ntpserver" in key or "server" in key):
-                    data["ntp"]["servers"].append(val)
-                    evidence.append(ParsedEvidenceItem(line=idx, text=sline, field="ntp.servers"))
-                    continue
+                if current_config_block and ("ntp" in current_config_block or "server" in current_config_block):
+                    if key in ("server", "ntpserver") or "server" in key:
+                        data["ntp"]["servers"].append(val)
+                        evidence.append(ParsedEvidenceItem(line=idx, text=sline, field="ntp.servers"))
+                        continue
 
                 # Item-level setting within a block (e.g. edit "port1")
                 if current_item:

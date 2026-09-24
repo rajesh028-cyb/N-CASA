@@ -7,6 +7,7 @@ import Input from '../components/ui/Input';
 import Modal from '../components/ui/Modal';
 import EmptyState from '../components/ui/EmptyState';
 import Button from '../components/ui/Button';
+import PageHeader from '../components/layout/PageHeader';
 
 const severities = ['All', 'Critical', 'High', 'Medium', 'Low'];
 const frameworks = ['All', 'CIS', 'NIST', 'STIG'];
@@ -76,14 +77,12 @@ export default function Findings() {
   }[label?.toUpperCase()] ?? { bg: 'bg-ncasa-surface2', text: 'text-ncasa-muted' });
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 flex-1 flex flex-col">
       {/* Page Header */}
-      <div>
-        <h1 className="text-xl font-bold text-ncasa-text">Security Findings</h1>
-        <p className="text-sm text-ncasa-muted mt-0.5">
-          Review deduplicated security findings extracted from deterministic compliance checks.
-        </p>
-      </div>
+      <PageHeader
+        title="Security Findings"
+        subtitle="Review deduplicated security findings extracted from deterministic compliance checks."
+      />
 
       {/* Summary Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">

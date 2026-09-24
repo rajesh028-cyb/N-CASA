@@ -2,7 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Table, Tr, Td } from '../ui/Table';
 import Badge from '../ui/Badge';
-import { Eye, FileText } from 'lucide-react';
+import { Eye, FileText, FilePlus2 } from 'lucide-react';
+import Button from '../ui/Button';
 
 /**
  * RecentAudits — dashboard table showing latest audit records from PostgreSQL.
@@ -13,8 +14,16 @@ export default function RecentAudits({ audits = [] }) {
 
   if (!audits || audits.length === 0) {
     return (
-      <div className="p-8 text-center text-sm text-ncasa-muted">
-        No recent audits found. Create your first audit to get started.
+      <div className="py-10 text-center flex flex-col items-center justify-center space-y-3">
+        <p className="text-sm font-semibold text-ncasa-text">No audits yet</p>
+        <p className="text-xs text-ncasa-muted max-w-sm">
+          No security audit records found in the database. Ingest a configuration package to begin deterministic compliance analysis.
+        </p>
+        <Link to="/audit/new" className="pt-1">
+          <Button variant="primary" size="sm" icon={FilePlus2}>
+            Start New Audit
+          </Button>
+        </Link>
       </div>
     );
   }

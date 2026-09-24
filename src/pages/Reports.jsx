@@ -5,6 +5,7 @@ import { fetchAuditReports, generateReport, getReportHtmlUrl, getReportPdfUrl } 
 import { Table, Tr, Td } from '../components/ui/Table';
 import Badge from '../components/ui/Badge';
 import Button from '../components/ui/Button';
+import PageHeader from '../components/layout/PageHeader';
 
 export default function Reports() {
   const [reportsList, setReportsList] = useState([]);
@@ -62,19 +63,17 @@ export default function Reports() {
   };
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6 flex-1 flex flex-col">
       {/* Page Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-bold text-ncasa-text">Security Audit Reports</h1>
-          <p className="text-sm text-ncasa-muted mt-0.5">
-            Persistent point-in-time HTML and PDF audit snapshots generated from PostgreSQL state.
-          </p>
-        </div>
-        <Button variant="outline" size="sm" icon={RefreshCw} onClick={loadData} disabled={loading}>
-          Refresh
-        </Button>
-      </div>
+      <PageHeader
+        title="Security Audit Reports"
+        subtitle="Persistent point-in-time HTML and PDF audit snapshots generated from PostgreSQL state."
+        actions={
+          <Button variant="outline" size="sm" icon={RefreshCw} onClick={loadData} disabled={loading}>
+            Refresh
+          </Button>
+        }
+      />
 
       {/* Safety Notice Strip */}
       <div className="flex items-start gap-3 px-4 py-3 rounded border border-ncasa-border bg-ncasa-surface2 text-xs text-ncasa-muted">

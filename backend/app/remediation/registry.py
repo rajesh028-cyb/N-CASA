@@ -46,7 +46,7 @@ class FallbackManualReviewTemplate(BaseRemediationTemplate):
             audit_id=finding.audit_id,
             control_id=self.control_id,
             framework=finding.framework,
-            vendor=finding.framework if self.vendor == "UNKNOWN" else self.vendor,
+            vendor=finding.vendor if (finding.vendor and finding.vendor != "UNKNOWN") else self.vendor,
             device_type="Network Device",
             title=f"Manual Review Required for {finding.title}",
             description=f"Automatic remediation is not available: {self.reason}",

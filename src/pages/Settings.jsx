@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { getHealthStatus } from '../api/client';
 import Button from '../components/ui/Button';
+import PageHeader from '../components/layout/PageHeader';
 
 export default function Settings() {
   const [health, setHealth] = useState({ status: 'checking', database: 'checking' });
@@ -36,19 +37,17 @@ export default function Settings() {
   const dbOk = health.database === 'connected';
 
   return (
-    <div className="space-y-6 max-w-4xl">
+    <div className="space-y-6 flex-1 flex flex-col">
       {/* Page Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-bold text-ncasa-text">System Settings & Operational Status</h1>
-          <p className="text-sm text-ncasa-muted mt-0.5">
-            Overview of backend services, database persistence, supported vendors, and compliance guardrails.
-          </p>
-        </div>
-        <Button variant="outline" size="sm" icon={RefreshCw} onClick={fetchHealth} disabled={loading}>
-          Refresh Status
-        </Button>
-      </div>
+      <PageHeader
+        title="System Settings & Operational Status"
+        subtitle="Overview of backend services, database persistence, supported vendors, and compliance guardrails."
+        actions={
+          <Button variant="outline" size="sm" icon={RefreshCw} onClick={fetchHealth} disabled={loading}>
+            Refresh Status
+          </Button>
+        }
+      />
 
       {/* Live System Health Section */}
       <div className="bg-ncasa-surface border border-ncasa-border rounded p-5 space-y-4">

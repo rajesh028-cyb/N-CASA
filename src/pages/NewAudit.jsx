@@ -29,6 +29,7 @@ import {
 } from 'lucide-react';
 import Button from '../components/ui/Button';
 import Badge from '../components/ui/Badge';
+import PageHeader from '../components/layout/PageHeader';
 import {
   uploadAudit,
   getAudit,
@@ -697,14 +698,12 @@ export default function NewAudit() {
   const hasUnknownVendor = detectionSummary?.files?.some((f) => f.vendor === 'Unknown');
 
   return (
-    <div className="space-y-6 max-w-4xl">
+    <div className="space-y-6 flex-1 flex flex-col">
       {/* Page header */}
-      <div>
-        <h1 className="text-xl font-bold text-ncasa-text">New Security Audit</h1>
-        <p className="text-sm text-ncasa-muted mt-0.5">
-          Ingest, discover, detect, and parse multi-vendor network configurations for compliance auditing.
-        </p>
-      </div>
+      <PageHeader
+        title="New Security Audit"
+        subtitle="Ingest, discover, detect, and parse multi-vendor network configurations for compliance auditing."
+      />
 
       {/* ── POST-UPLOAD PIPELINE VIEWS ──────────────────────────────────── */}
       {isPostUpload && auditData && (

@@ -8,11 +8,11 @@ import {
   Wrench,
   FileText,
   Settings,
-  Shield,
   ChevronLeft,
   ChevronRight,
   Menu,
 } from 'lucide-react';
+import ShieldLogo from '../ui/Logo';
 
 const navItems = [
   { to: '/',             label: 'Dashboard',    icon: LayoutDashboard },
@@ -33,15 +33,17 @@ export default function Sidebar({ collapsed, setCollapsed }) {
       `}
     >
       {/* Logo area */}
-      <div className={`flex items-center border-b border-ncasa-border px-4 h-[57px] shrink-0 ${collapsed ? 'justify-center px-2' : ''}`}>
+      <div className={`flex items-center border-b border-ncasa-border px-3.5 h-14 shrink-0 ${collapsed ? 'justify-center px-2' : ''}`}>
         <div className="flex items-center gap-2.5 min-w-0">
-          <div className="shrink-0 flex items-center justify-center w-8 h-8 bg-ncasa-accent rounded">
-            <Shield size={16} className="text-white" />
-          </div>
+          <ShieldLogo size={28} />
           {!collapsed && (
             <div className="min-w-0">
-              <p className="text-sm font-bold text-ncasa-text tracking-tight leading-none">N-CASA</p>
-              <p className="text-[10px] text-ncasa-muted leading-tight mt-0.5 truncate">Security Auditor</p>
+              <span className="text-sm font-bold text-ncasa-text tracking-tight block leading-none">
+                N-CASA
+              </span>
+              <span className="text-[10px] font-medium text-ncasa-muted tracking-wide block mt-1 truncate">
+                Security Auditor
+              </span>
             </div>
           )}
         </div>

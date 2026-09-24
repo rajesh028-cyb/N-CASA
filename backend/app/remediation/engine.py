@@ -50,29 +50,41 @@ class RemediationEngine:
 
         remediations: List[RemediationRecord] = []
         for finding in open_findings:
-            # Determine vendor for finding (from vendor_map or evidence/affected_files context)
-            vendor = "UNKNOWN"
-            if vendor_map:
-                for file_id in finding.affected_files:
-                    if file_id in vendor_map:
-                        vendor = vendor_map[file_id]
+            # Determine vendor for finding from finding metadata, vendor_map, or evidence
+            vendor = (finding.vendor or "").strip()
+            if not vendor or vendor.upper() == "UNKNOWN":
+                vendor = "UNKNOWN"
+                if vendor_map:
+                    # Check finding file_id first
+                    if finding.file_id and finding.file_id in vendor_map:
+                        vendor = vendor_map[finding.file_id]
+                    else:
+                        for fid in finding.affected_files:
+                            if fid in vendor_map:
+                                vendor = vendor_map[fid]
+                                break
+
+            # If still UNKNOWN, check evidence source_file against vendor_map
+            if vendor == "UNKNOWN" and vendor_map:
+                for ev in finding.evidence:
+                    if hasattr(ev, "source_file") and ev.source_file in vendor_map:
+                        vendor = vendor_map[ev.source_file]
                         break
 
-            # Fallback to Cisco/Juniper/Fortinet if vendor in metadata or evidence
+            # If still UNKNOWN, check whether finding.affected_files or evidence filenames contain clear vendor tokens
             if vendor == "UNKNOWN":
                 for ev in finding.evidence:
                     if hasattr(ev, "source_file") and ev.source_file:
                         fn = ev.source_file.lower()
                         if "cisco" in fn or "ios" in fn:
                             vendor = "Cisco"
+                            break
                         elif "juniper" in fn or "junos" in fn:
                             vendor = "Juniper"
+                            break
                         elif "forti" in fn:
                             vendor = "Fortinet"
-
-            # Fallback default: if finding framework is CIS/NIST and vendor not found, default to Cisco for demo
-            if vendor == "UNKNOWN" and finding.affected_files:
-                vendor = "Cisco"
+                            break
 
             template = remediation_registry.get_template(vendor, finding.control_id)
             record = template.generate(finding)

@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Bell, ChevronDown, Shield, Database, Activity } from 'lucide-react';
+import { Bell, ChevronDown } from 'lucide-react';
 import { getHealthStatus } from '../../api/client';
 
 /**
- * Header — top application bar with system health and user badge.
- * @param {() => void} onMobileMenuToggle
+ * Header — Top application navigation bar.
+ * Provides subtle application context, live infrastructure status indicators,
+ * and user profile actions without duplicating sidebar branding.
+ *
+ * @param {() => void} onMobileMenuToggle - Mobile drawer menu toggle handler
  */
 export default function Header({ onMobileMenuToggle }) {
   const [health, setHealth] = useState({ status: 'checking', database: 'checking' });
@@ -35,13 +38,13 @@ export default function Header({ onMobileMenuToggle }) {
   const dbOk = health.database === 'connected';
 
   return (
-    <header className="h-[57px] shrink-0 flex items-center justify-between px-5 bg-ncasa-surface border-b border-ncasa-border">
-      {/* Left: Mobile menu toggle + Brand Title */}
-      <div className="flex items-center gap-3">
+    <header className="h-14 shrink-0 flex items-center justify-between px-6 bg-ncasa-surface border-b border-ncasa-border select-none">
+      {/* Left: Mobile Toggle + Subtle Application Context */}
+      <div className="flex items-center gap-3 min-w-0">
         <button
           onClick={onMobileMenuToggle}
-          className="lg:hidden text-ncasa-muted hover:text-ncasa-text transition-colors p-1 rounded"
-          aria-label="Toggle navigation"
+          className="lg:hidden text-ncasa-muted hover:text-ncasa-text transition-colors p-1.5 rounded hover:bg-ncasa-surface2 focus:outline-none focus:ring-2 focus:ring-ncasa-accent"
+          aria-label="Toggle navigation menu"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <line x1="3" y1="6" x2="21" y2="6" />
@@ -50,66 +53,82 @@ export default function Header({ onMobileMenuToggle }) {
           </svg>
         </button>
 
-        <div className="flex items-center gap-2">
-          <div className="hidden lg:flex items-center justify-center w-6 h-6 bg-ncasa-accent rounded">
-            <Shield size={14} className="text-white" />
-          </div>
-          <div>
-            <span className="text-sm font-bold text-ncasa-text tracking-tight">N-CASA</span>
-            <span className="hidden md:inline text-xs text-ncasa-muted ml-2 border-l border-ncasa-border pl-2">
-              Network Configuration Automated Security Auditor
-            </span>
-          </div>
+        {/* Subtle context label — no duplicate brand */}
+        <div className="flex items-center gap-2 truncate">
+          <span className="text-xs sm:text-sm font-medium text-ncasa-muted tracking-wide truncate">
+            AI-Driven Multi-Vendor Network Security Auditor
+          </span>
         </div>
       </div>
 
-      {/* Right: Live System Status & User Badge */}
-      <div className="flex items-center gap-3">
-        {/* System & DB Status Pill */}
-        <div className="hidden sm:flex items-center gap-3 text-xs bg-ncasa-surface2 border border-ncasa-border px-3 py-1 rounded">
-          <div className="flex items-center gap-1.5" title={`API Service: ${health.status}`}>
-            <Activity size={12} className={apiOk ? 'text-status-pass' : 'text-sev-critical'} />
-            <span className="text-ncasa-muted">API</span>
+      {/* Right: Live System Status & User Actions */}
+      <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
+        {/* Status Indicators */}
+        <div className="hidden md:flex items-center gap-2">
+          {/* API Status */}
+          <div
+            className="flex items-center gap-2 text-xs bg-ncasa-surface2 border border-ncasa-border px-2.5 py-1 rounded transition-colors"
+            title={`Backend Service: ${health.status}`}
+          >
+            <span
+              className={`w-2 h-2 rounded-full shrink-0 ${
+                apiOk
+                  ? 'bg-status-pass shadow-[0_0_6px_rgba(22,163,74,0.6)]'
+                  : 'bg-sev-critical shadow-[0_0_6px_rgba(220,38,38,0.6)]'
+              }`}
+            />
+            <span className="text-ncasa-muted font-medium">API</span>
             <span className={`font-semibold ${apiOk ? 'text-ncasa-text' : 'text-sev-critical'}`}>
               {apiOk ? 'Operational' : 'Degraded'}
             </span>
           </div>
-          <div className="w-px h-3 bg-ncasa-border" />
-          <div className="flex items-center gap-1.5" title={`PostgreSQL Database: ${health.database}`}>
-            <Database size={12} className={dbOk ? 'text-status-pass' : 'text-sev-critical'} />
-            <span className="text-ncasa-muted">Database</span>
+
+          {/* Database Status */}
+          <div
+            className="flex items-center gap-2 text-xs bg-ncasa-surface2 border border-ncasa-border px-2.5 py-1 rounded transition-colors"
+            title={`PostgreSQL Database: ${health.database}`}
+          >
+            <span
+              className={`w-2 h-2 rounded-full shrink-0 ${
+                dbOk
+                  ? 'bg-status-pass shadow-[0_0_6px_rgba(22,163,74,0.6)]'
+                  : 'bg-sev-critical shadow-[0_0_6px_rgba(220,38,38,0.6)]'
+              }`}
+            />
+            <span className="text-ncasa-muted font-medium">Database</span>
             <span className={`font-semibold ${dbOk ? 'text-ncasa-text' : 'text-sev-critical'}`}>
               {dbOk ? 'Connected' : 'Unavailable'}
             </span>
           </div>
         </div>
 
-        {/* Notification bell */}
+        {/* Notifications */}
         <button
           className="relative text-ncasa-muted hover:text-ncasa-text transition-colors p-2 rounded hover:bg-ncasa-surface2 focus:outline-none focus:ring-2 focus:ring-ncasa-accent"
-          aria-label="Notifications"
+          aria-label="System notifications"
           id="header-notifications-btn"
+          title="Notifications"
         >
           <Bell size={16} />
           <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-status-pass" />
         </button>
 
         {/* Divider */}
-        <div className="w-px h-5 bg-ncasa-border" />
+        <div className="w-px h-4 bg-ncasa-border" />
 
-        {/* Admin user */}
+        {/* Admin User Profile */}
         <button
           className="flex items-center gap-2 text-sm text-ncasa-subtle hover:text-ncasa-text transition-colors px-2 py-1.5 rounded hover:bg-ncasa-surface2 focus:outline-none focus:ring-2 focus:ring-ncasa-accent"
           id="header-user-btn"
+          aria-label="User profile settings"
         >
           <div className="w-6 h-6 rounded bg-ncasa-accent-l border border-ncasa-accent/40 flex items-center justify-center">
-            <span className="text-[10px] font-bold text-ncasa-accent">A</span>
+            <span className="text-[10px] font-bold text-ncasa-accent leading-none">A</span>
           </div>
-          <span className="hidden sm:inline font-medium">Admin</span>
-          <ChevronDown size={12} className="text-ncasa-muted" />
+          <span className="hidden sm:inline font-medium text-xs text-ncasa-text">Admin</span>
+          <ChevronDown size={12} className="text-ncasa-muted shrink-0" />
         </button>
       </div>
     </header>
   );
 }
-

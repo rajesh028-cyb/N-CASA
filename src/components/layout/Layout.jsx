@@ -43,7 +43,7 @@ export default function Layout() {
 
         {/* Scrollable page content */}
         <main className="flex-1 overflow-y-auto bg-ncasa-bg">
-          <div className="max-w-screen-xl mx-auto px-5 py-6">
+          <div className="max-w-screen-xl mx-auto px-6 py-6 min-h-full flex flex-col">
             <Outlet />
           </div>
         </main>

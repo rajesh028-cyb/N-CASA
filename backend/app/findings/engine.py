@@ -65,6 +65,8 @@ class FindingsEngine:
             evidence_list: List[FindingEvidence] = []
 
             for res in results_list:
+                if getattr(res, "file_id", None):
+                    affected_files_set.add(res.file_id)
                 for ev in res.evidence:
                     if ev.source_file:
                         affected_files_set.add(ev.source_file)
@@ -113,6 +115,9 @@ class FindingsEngine:
                 expected=first_res.expected,
                 observed=first_res.observed,
                 rationale=rationale,
+                vendor=getattr(first_res, "vendor", "") or "",
+                device_type=getattr(first_res, "device_type", "") or "",
+                file_id=getattr(first_res, "file_id", None),
                 remediation_status=RemediationStatusEnum.PENDING_BLOCK_9,
             )
             findings.append(finding)
@@ -126,8 +131,11 @@ class FindingsEngine:
         for control_id, results_list in grouped_unverifiable.items():
             first_res = results_list[0]
             affected_files_set = {
+                getattr(res, "file_id", None) for res in results_list if getattr(res, "file_id", None)
+            } | {
                 ev.source_file for res in results_list for ev in res.evidence if ev.source_file
             }
+            affected_files_set.discard(None)
             affected_files = sorted(list(affected_files_set)) if affected_files_set else ["inventory_config"]
 
             limitation = AssessmentLimitation(
